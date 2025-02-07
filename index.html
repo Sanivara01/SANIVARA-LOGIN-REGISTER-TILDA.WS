@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autentikasi - SANIVARA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #004AAD, #007BFF);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .container {
+            width: 100%;
+            max-width: 320px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .form-box {
+            background: white;
+            color: black;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: left;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        label {
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: block;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007BFF;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+        p {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="logo">SANIVARA</h1>
+
+        <!-- Form Login -->
+        <div class="form-box" id="loginForm">
+            <h2>Masuk</h2>
+            <form>
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="Masukkan email" required>
+
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Masukkan password" required>
+
+                <p id="loginError" class="error"></p>
+
+                <button type="button" onclick="login()">Login</button>
+            </form>
+            <p><a href="#" onclick="showForm('resetForm')">Lupa kata sandi?</a></p>
+            <p>Belum punya akun? <a href="#" onclick="showForm('registerForm')">Daftar</a></p>
+        </div>
+
+        <!-- Form Registrasi -->
+        <div class="form-box hidden" id="registerForm">
+            <h2>Daftar</h2>
+            <form>
+                <label>Nama Lengkap</label>
+                <input type="text" id="fullName" placeholder="Masukkan nama lengkap" required>
+
+                <label>Email</label>
+                <input type="email" id="registerEmail" placeholder="Masukkan email" required>
+
+                <label>Password</label>
+                <input type="password" id="registerPassword" placeholder="Buat password" required>
+
+                <p id="registerError" class="error"></p>
+
+                <button type="button" onclick="register()">Daftar</button>
+            </form>
+            <p>Sudah punya akun? <a href="#" onclick="showForm('loginForm')">Masuk</a></p>
+        </div>
+
+        <!-- Form Reset Password -->
+        <div class="form-box hidden" id="resetForm">
+            <h2>Reset Kata Sandi</h2>
+            <form>
+                <label>Email</label>
+                <input type="email" id="resetEmail" placeholder="Masukkan email" required>
+
+                <button type="button" onclick="resetPassword()">Kirim Link Reset</button>
+            </form>
+            <p><a href="#" onclick="showForm('loginForm')">Kembali ke login</a></p>
+        </div>
+
+        <footer>
+            SANIVARA | heri.idtech | ©2025 Hak Cipta.
+        </footer>
+    </div>
+
+    <script>
+        function showForm(formId) {
+            document.getElementById("loginForm").classList.add("hidden");
+            document.getElementById("registerForm").classList.add("hidden");
+            document.getElementById("resetForm").classList.add("hidden");
+            document.getElementById(formId).classList.remove("hidden");
+        }
+
+        function register() {
+            let fullName = document.getElementById("fullName").value;
+            let email = document.getElementById("registerEmail").value;
+            let password = document.getElementById("registerPassword").value;
+
+            if (password.length < 6) {
+                document.getElementById("registerError").textContent = "Password minimal 6 karakter!";
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            if (users.some(user => user.email === email)) {
+                document.getElementById("registerError").textContent = "Email sudah terdaftar!";
+                return;
+            }
+
+            users.push({ fullName, email, password });
+            localStorage.setItem("users", JSON.stringify(users));
+
+            alert("Registrasi berhasil!");
+            showForm('loginForm');
+        }
+
+        function login() {
+            let email = document.getElementById("loginEmail").value;
+            let password = document.getElementById("loginPassword").value;
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let user = users.find(user => user.email === email && user.password === password);
+
+            if (!user) {
+                document.getElementById("loginError").textContent = "Email atau password salah!";
+                return;
+            }
+
+            localStorage.setItem("loggedInUser", JSON.stringify(user));
+            alert("Login berhasil!");
+            window.location.href = "Http://sanivara.tilda.ws.dashboards4n1v4r4"; // Redirect ke halaman yang diproteksi
+        }
+
+        function resetPassword() {
+            alert("Link reset telah dikirim ke email!");
+        }
+    </script>
+
+</body>
+</html>
